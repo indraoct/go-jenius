@@ -90,3 +90,10 @@ func main(){
 	fmt.Println(res)
 }
 ```
+
+
+## License
+
+MIT
+
+Copyright (c) 2020 - Indra Octama
