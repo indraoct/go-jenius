@@ -18,3 +18,8 @@ type CredentialAccess struct {
 	XTransmissionDateTime string  `json:"x_transmission_date_time"`
 	XReferenceNo          string  `json:"x_reference_no"`
 }
+
+type TrxStatusRequest struct {
+	TrxDateTime       string
+	ReferenceNo       string
+}
