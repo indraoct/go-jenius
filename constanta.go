@@ -6,5 +6,5 @@ const (
     JENIUS_DATETIME_FORMAT  = "2006-01-02T15:04:05.999-07:00"
  
 	EndpointCreateTransaction =  ":9502/jpay/payrequest"
-	EndpointPaymentStatus     =  ":9502/jpay/paystatus"
+	EndpointTransactionStatus     =  ":9502/jpay/paystatus"
 )

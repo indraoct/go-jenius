@@ -3,8 +3,7 @@ package jenius
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
-	"io"
+	"go-jenius/helper"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -42,29 +41,6 @@ func NewClient() Client{
 
 var timeout = 30 * time.Second
 var httpClient = http.Client{Timeout: timeout}
-
-func (c *Client) NewRequest(method string,fullPath string, body io.Reader,credentials CredentialAccess) (req *http.Request, err error){
-	req,err = http.NewRequest(method,fullPath,body)
-	
-	if err != nil{
-		if c.Debug == true{
-			c.Logger.Println("Request creation failed: ", err)
-		}
-	}
-	
-	
-	req.Header.Add("Authorization","Bearer "+credentials.Authorization)
-	req.Header.Add("BTPN-Signature",credentials.BTPNSignature)
-	req.Header.Add("BTPN-ApiKey",credentials.BTPNApiKey)
-	req.Header.Add("BTPN-Timestamp",c.TimeStamp)
-	req.Header.Add("X-Channel-Id",c.ChannelId)
-	req.Header.Add("X-Node","Jenius Pay")
-	req.Header.Add("X-Transmission-Date-Time",c.TimeStamp)
-	req.Header.Add("X-Reference-No",c.ReferenceNo)
-	req.Header.Add("Content-Type","application/json")
-	
-	return req,err
-}
 
 func (c *Client) GenerateTokenAccess(payloadString string,httpVerb string,relativeUrl string)(credentials CredentialAccess,err error){
 	
@@ -146,6 +122,7 @@ func (c *Client) ExecuteRequest(req *http.Request) ([]byte, error) {
 	
 	if c.Debug {
 		c.Logger.Println("Completed in ", time.Since(start))
+		c.Logger.Println("Transaction Date", helper.GetNowTime().Format(JENIUS_DATETIME_FORMAT))
 	}
 	
 	if err != nil {
@@ -168,30 +145,4 @@ func (c *Client) ExecuteRequest(req *http.Request) ([]byte, error) {
 	}
 	
 	return resBody, nil
-}
-
-
-func (c *Client) Call(method, path string, body io.Reader,credentials CredentialAccess) ([]byte, error) {
-	
-	if c.Environtment == "dev"{
-		path = c.UrlDevelopment + path
-	}else if c.Environtment == "prod"{
-		path = c.UrlProduction + path
-	}else{
-		c.Logger.Println("Parameter Environtment must be 'dev' or 'prod' ")
-		return []byte{}, errors.New("Parameter Environtment must be 'dev' or 'prod' ")
-	}
-	
-	req, err := c.NewRequest(method, path, body,credentials)
-	
-	if err != nil {
-		return nil, err
-	}
-	
-	resp, err := c.ExecuteRequest(req)
-	if err != nil {
-		return nil, err
-	}
-	
-	return resp, nil
 }
