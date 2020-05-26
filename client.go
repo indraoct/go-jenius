@@ -3,7 +3,7 @@ package jenius
 import (
 	"bytes"
 	"encoding/json"
-	"go-jenius/helper"
+	"github.com/indraoct/go-jenius/helper"
 	"io/ioutil"
 	"log"
 	"net/http"
